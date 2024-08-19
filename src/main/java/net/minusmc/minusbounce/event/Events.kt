@@ -89,6 +89,13 @@ class PreMotionEvent(var x: Double, var y: Double, var z: Double, var yaw: Float
 class PostMotionEvent: Event()
 
 /**
+ * Called in "onUpdateWalkingPlayer"
+ */
+class MotionEvent(var x: Double, var y: Double, var z: Double, var yaw: Float, var pitch: Float, var onGround: Boolean) : Event() {
+    var eventState: EventState = EventState.PRE
+}
+
+/**
  * Called when player sprints or sneaks, after pre-motion event
  */
 class ActionEvent(var sprinting: Boolean, var sneaking: Boolean) : Event()
