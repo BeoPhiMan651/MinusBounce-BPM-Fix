@@ -17,6 +17,14 @@ open class CancellableEvent : Event() {
      * @return state of cancel
      */
     var isCancelled: Boolean = false
+
+    /**
+     * Allows you to cancel a event
+     */
+    fun cancelEvent() {
+        isCancelled = true
+    }
+
 }
 
 enum class EventPriority(val priority: Int) {

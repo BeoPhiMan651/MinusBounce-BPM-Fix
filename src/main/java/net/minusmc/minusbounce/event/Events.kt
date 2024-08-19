@@ -94,6 +94,11 @@ class PostMotionEvent: Event()
 class ActionEvent(var sprinting: Boolean, var sneaking: Boolean) : Event()
 
 /**
+ * Called when receive or send a packet
+ */
+class PacketEvent(val packet: Packet<*>) : CancellableEvent()
+
+/**
  * Called in "onLivingUpdate" when the player is using a use item.
  */
 class SlowDownEvent(var strafe: Float, var forward: Float) : CancellableEvent()
