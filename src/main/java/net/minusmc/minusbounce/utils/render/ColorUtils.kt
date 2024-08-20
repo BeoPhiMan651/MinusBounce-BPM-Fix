@@ -104,22 +104,6 @@ object ColorUtils {
     }
 
     @JvmStatic
-    fun hslRainbow(
-        index: Int,
-        lowest: Float = HUD.rainbowStartValue.get(),
-        bigest: Float = HUD.rainbowStopValue.get(),
-        indexOffset: Int = 300,
-        timeSplit: Int = HUD.rainbowSpeedValue.get(),
-        saturation: Float = HUD.rainbowSaturationValue.get(),
-        brightness: Float = HUD.rainbowBrightnessValue.get()
-    ): Color {
-        return Color.getHSBColor((abs(((((System.currentTimeMillis() - startTime).toInt() + index * indexOffset) / timeSplit.toFloat()) % 2) - 1) * (bigest - lowest)) + lowest, saturation, brightness)
-    }
-
-    @JvmStatic
-    fun rainbowWithAlpha(alpha: Int) = reAlpha(hslRainbow(1), alpha)
-
-    @JvmStatic
     fun rainbow(alpha: Float) = rainbow(400000L, alpha)
 
     @JvmStatic
