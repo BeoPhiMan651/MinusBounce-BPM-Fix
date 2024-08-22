@@ -15,7 +15,7 @@ import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.HttpsURLConnection
 
 /**
- * LiquidBounce++ Hacked Client
+ * MinusBounce Hacked Client
  * A minecraft forge injection client using Mixin
  *
  * @game Minecraft
