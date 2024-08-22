@@ -20,6 +20,9 @@ import net.minusmc.minusbounce.ui.font.GameFontRenderer.Companion.getColorIndex
 import net.minusmc.minusbounce.utils.render.AnimationUtils
 import net.minusmc.minusbounce.utils.render.BlendUtils
 import net.minusmc.minusbounce.utils.render.ColorUtils
+import net.minusmc.minusbounce.utils.render.ColorUtils.LiquidSlowly
+import net.minusmc.minusbounce.utils.render.ColorUtils.fade
+import net.minusmc.minusbounce.utils.render.ColorUtils.reAlpha
 import net.minusmc.minusbounce.utils.render.RenderUtils
 import net.minusmc.minusbounce.value.BoolValue
 import net.minusmc.minusbounce.value.FloatValue
@@ -31,32 +34,37 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 
-@ModuleInfo(name = "TargetMark", spacedName = "Target Mark", description = "Displays your KillAura's target in 3D.", category = ModuleCategory.RENDER)
+@ModuleInfo(
+    name = "TargetMark",
+    spacedName = "Target Mark",
+    description = "Displays your KillAura's target in 3D.",
+    category = ModuleCategory.RENDER
+)
 class TargetMark : Module() {
     val modeValue = ListValue("Mode", arrayOf("Default", "Box", "Jello"), "Default")
     private val colorModeValue =
-        ListValue("Color", arrayOf("Custom", "Rainbow", "Sky", "Fade", "LiquidSlowly", "Health"), "Custom")
+        ListValue("Color", arrayOf("Custom", "Rainbow", "Sky", "LiquidSlowly", "Fade", "Health"), "Custom")
     private val colorRedValue = IntegerValue("Red", 255, 0, 255)
     private val colorGreenValue = IntegerValue("Green", 255, 0, 255)
     private val colorBlueValue = IntegerValue("Blue", 255, 0, 255)
     private val colorAlphaValue = IntegerValue("Alpha", 255, 0, 255)
     private val jelloAlphaValue = FloatValue("JelloEndAlphaPercent", 0.4f, 0f, 1f, "x") {
-        modeValue.get().equals("jello", true)
+        modeValue.get().equals("jello", ignoreCase = true)
     }
     private val jelloWidthValue = FloatValue("JelloCircleWidth", 3f, 0.01f, 5f) {
-        modeValue.get().equals("jello", true)
+        modeValue.get().equals("jello", ignoreCase = true)
     }
     private val jelloGradientHeightValue = FloatValue("JelloGradientHeight", 3f, 1f, 8f, "m") {
-        modeValue.get().equals("jello", true)
+        modeValue.get().equals("jello", ignoreCase = true)
     }
     private val jelloFadeSpeedValue = FloatValue("JelloFadeSpeed", 0.1f, 0.01f, 0.5f, "x") {
-        modeValue.get().equals("jello", true)
+        modeValue.get().equals("jello", ignoreCase = true)
     }
     private val saturationValue = FloatValue("Saturation", 1f, 0f, 1f)
     private val brightnessValue = FloatValue("Brightness", 1f, 0f, 1f)
     private val mixerSecondsValue = IntegerValue("Seconds", 2, 1, 10)
     val moveMarkValue = FloatValue("MoveMarkY", 0.6f, 0f, 2f) {
-        modeValue.get().equals("default", true)
+        modeValue.get().equals("default", ignoreCase = true)
     }
     private val colorTeam = BoolValue("Team", false)
     private var entity: EntityLivingBase? = null
@@ -74,9 +82,11 @@ class TargetMark : Module() {
 
     @EventTarget
     fun onTick(event: TickEvent?) {
-        if (modeValue.get().equals("jello", true) && !aura!!.targetModeValue.get().equals("multi", true)) al = AnimationUtils.changer(
+        if (modeValue.get().equals("jello", ignoreCase = true) && !aura!!.targetModeValue.get()
+                .equals("multi", ignoreCase = true)
+        ) al = AnimationUtils.changer(
             al,
-            if (currentTarget != null) jelloFadeSpeedValue.get() else -jelloFadeSpeedValue.get(),
+            if (aura!!.target != null) jelloFadeSpeedValue.get() else -jelloFadeSpeedValue.get(),
             0f,
             colorAlphaValue.get() / 255.0f
         )
@@ -85,8 +95,8 @@ class TargetMark : Module() {
     @EventTarget
     fun onRender3D(event: Render3DEvent?) {
 
-        if (modeValue.get().equals("jello", true) && !aura!!.targetModeValue.get()
-                .equals("multi", true)
+        if (modeValue.get().equals("jello", ignoreCase = true) && !aura!!.targetModeValue.get()
+                .equals("multi", ignoreCase = true)
         ) {
             val lastY = yPos
             if (al > 0f) {
@@ -101,8 +111,8 @@ class TargetMark : Module() {
             } else { // keep the progress
                 lastMS = System.currentTimeMillis() - lastDeltaMS
             }
-            if (currentTarget != null) {
-                entity = currentTarget
+            if (aura!!.target != null) {
+                entity = aura!!.target
                 bb = entity!!.entityBoundingBox
             }
             if (bb == null || entity == null) return
@@ -138,13 +148,13 @@ class TargetMark : Module() {
             GL11.glEnd()
             drawCircle(posX, posY + yPos, posZ, jelloWidthValue.get(), radius, r, g, b, al)
             post3D()
-        } else if (modeValue.get().equals("default", true)) {
+        } else if (modeValue.get().equals("default", ignoreCase = true)) {
             if (!aura!!.targetModeValue.get()
-                    .equals("multi", true) && currentTarget != null
-            ) currentTarget?.let {
+                    .equals("multi", ignoreCase = true) && aura!!.target != null
+            ) aura!!.target?.let {
                 RenderUtils.drawPlatform(
                     it,
-                    if (aura!!.hitable) ColorUtils.reAlpha(getColor(currentTarget)!!, colorAlphaValue.get()) else Color(
+                    if (aura!!.hitable) reAlpha(getColor(aura!!.target)!!, colorAlphaValue.get()) else Color(
                         255,
                         0,
                         0,
@@ -153,11 +163,12 @@ class TargetMark : Module() {
                 )
             }
         } else { // = cai multi nay la box à
-            if (!aura!!.targetModeValue.get().equals("multi", true) && currentTarget != null
-            ) currentTarget?.let {
+            if (!aura!!.targetModeValue.get()
+                    .equals("multi", ignoreCase = true) && aura!!.target != null
+            ) aura!!.target?.let {
                 RenderUtils.drawEntityBox(
                     it,
-                    if (aura!!.hitable) ColorUtils.reAlpha(getColor(currentTarget)!!, colorAlphaValue.get()) else Color(
+                    if (aura!!.hitable) reAlpha(getColor(aura!!.target)!!, colorAlphaValue.get()) else Color(
                         255,
                         0,
                         0,
@@ -171,7 +182,7 @@ class TargetMark : Module() {
 
     fun getColor(ent: Entity?): Color? {
         if (ent is EntityLivingBase) {
-            if (colorModeValue.get().equals("Health", true)) return BlendUtils.getHealthColor(
+            if (colorModeValue.get().equals("Health", ignoreCase = true)) return BlendUtils.getHealthColor(
                 ent.health,
                 ent.maxHealth
             )
@@ -191,16 +202,17 @@ class TargetMark : Module() {
         return when (colorModeValue.get()) {
             "Custom" -> Color(colorRedValue.get(), colorGreenValue.get(), colorBlueValue.get())
             "Rainbow" -> Color(
-                ColorUtils.getRainbowOpaque(
+                RenderUtils.getRainbowOpaque(
                     mixerSecondsValue.get(),
                     saturationValue.get(),
                     brightnessValue.get(),
                     0
                 )
             )
-            "Sky" -> Color(ColorUtils.skyRainbow(0, saturationValue.get(), brightnessValue.get()))
-            "LiquidSlowly" -> ColorUtils.liquidSlowly(System.nanoTime(), 0, saturationValue.get(), brightnessValue.get())
-            else -> ColorUtils.fade(Color(colorRedValue.get(), colorGreenValue.get(), colorBlueValue.get()), 0, 100)
+
+            "Sky" -> RenderUtils.skyRainbow(0, saturationValue.get(), brightnessValue.get())
+            "LiquidSlowly" -> LiquidSlowly(System.nanoTime(), 0, saturationValue.get(), brightnessValue.get())
+            else -> fade(Color(colorRedValue.get(), colorGreenValue.get(), colorBlueValue.get()), 0, 100)
         }
     }
 
@@ -260,7 +272,4 @@ class TargetMark : Module() {
             GL11.glColor4f(1f, 1f, 1f, 1f)
         }
     }
-
-    val currentTarget: EntityLivingBase?
-        get() = MinusBounce.combatManager.target
 }

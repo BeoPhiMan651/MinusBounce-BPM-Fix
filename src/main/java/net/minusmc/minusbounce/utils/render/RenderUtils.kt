@@ -296,6 +296,23 @@ object RenderUtils : MinecraftInstance() {
         drawBorder(x, y, x2, y2, width, color1)
     }
 
+    fun skyRainbow(var2: Int, st: Float, bright: Float): Color {
+        var v1 = ceil((System.currentTimeMillis() + (var2 * 109).toLong()).toDouble()) / 5
+        return Color.getHSBColor(if ((360.0.also { v1 %= it } / 360.0).toFloat()
+                .toDouble() < 0.5) -(v1 / 360.0).toFloat() else (v1 / 360.0).toFloat(), st, bright)
+    }
+
+    fun getRainbowOpaque(
+        seconds: Int,
+        saturation: Float,
+        brightness: Float,
+        index: Int
+    ): Int {
+        val hue =
+            (System.currentTimeMillis() + index) % (seconds * 1000) / (seconds * 1000).toFloat()
+        return Color.HSBtoRGB(hue, saturation, brightness)
+    }
+
     fun originalRoundedRect(
         paramXStart: Float,
         paramYStart: Float,
