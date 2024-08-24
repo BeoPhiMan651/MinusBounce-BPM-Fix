@@ -5,23 +5,25 @@
  */
 package net.minusmc.minusbounce.features.module.modules.movement.speeds.other
 
-import net.minusmc.minusbounce.utils.player.MovementUtils.isMoving
 import net.minusmc.minusbounce.features.module.modules.movement.speeds.SpeedMode
 import net.minusmc.minusbounce.features.module.modules.movement.speeds.SpeedType
+import net.minusmc.minusbounce.utils.player.MovementUtils.isMoving
 import net.minusmc.minusbounce.utils.extensions.tryJump
 
 class LegitSpeed: SpeedMode("Legit", SpeedType.OTHER) {
-    fun onStrafe() {
-        val player = mc.thePlayer ?: return
-
-        if (mc.thePlayer.onGround && isMoving) {
-            player.tryJump()
-        }
-    }
-
     override fun onUpdate() {
         val player = mc.thePlayer ?: return
 
-        player.isSprinting = player.movementInput.moveForward > 0.8
+        if (player.isInWater || player.isInLava || player.isInWeb || player.isOnLadder) return
+
+        if (player.onGround && isMoving) {
+            player.tryJump()
+        }
+
+        if (player.motionY > 0.003) {
+            player.motionX *= 1.0015
+            player.motionZ *= 1.0015
+            mc.timer.timerSpeed = 1.06f
+        }
     }
 }
