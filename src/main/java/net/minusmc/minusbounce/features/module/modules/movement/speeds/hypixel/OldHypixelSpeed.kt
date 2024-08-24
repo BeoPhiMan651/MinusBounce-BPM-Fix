@@ -7,7 +7,7 @@ import net.minusmc.minusbounce.utils.player.RotationUtils
 import net.minecraft.client.settings.GameSettings
 import kotlin.math.abs
 
-class HypixelSpeed: SpeedMode("Hypixel", SpeedType.WATCHDOG) {
+class HypixelSpeed: SpeedMode("OldHypixel", SpeedType.HYPIXEL) {
 
     private var wasTimer = false
 

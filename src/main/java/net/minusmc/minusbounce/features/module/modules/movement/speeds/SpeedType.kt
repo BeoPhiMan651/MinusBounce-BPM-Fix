@@ -7,7 +7,7 @@ enum class SpeedType(val typeName: String) {
     NCP("NCP"),
     VERUS("Verus"),
     MATRIX("Matrix"),
-    WATCHDOG("Watchdog"),
+    HYPIXEL("Hypixel"),
     BLOCKSMC("BlocksMC"),
     OTHER("Other"),
 }

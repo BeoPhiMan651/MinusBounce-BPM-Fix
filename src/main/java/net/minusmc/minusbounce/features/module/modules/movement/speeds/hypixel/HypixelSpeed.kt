@@ -1,4 +1,4 @@
-package net.minusmc.minusbounce.features.module.modules.movement.speeds.watchdog
+package net.minusmc.minusbounce.features.module.modules.movement.speeds.hypixel
 
 import net.minecraft.potion.Potion
 import net.minecraft.stats.StatList
@@ -10,7 +10,7 @@ import net.minusmc.minusbounce.features.module.modules.movement.speeds.SpeedMode
 import net.minusmc.minusbounce.features.module.modules.movement.speeds.SpeedType
 import net.minusmc.minusbounce.utils.player.MovementUtils
 
-class WatchdogGround : SpeedMode("Hypixel", SpeedType.WATCHDOG) {
+class WatchdogGround : SpeedMode("Hypixel", SpeedType.HYPIXEL) {
 
     override fun onJump(event: JumpEvent) {
         if (mc.thePlayer != null && MovementUtils.isMoving)
