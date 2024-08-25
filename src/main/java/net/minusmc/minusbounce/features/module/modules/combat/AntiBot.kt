@@ -53,6 +53,7 @@ object AntiBot : Module() {
     private val spawnInCombatValue = BoolValue("SpawnInCombat", true)
     private val duplicateInWorldValue = BoolValue("DuplicateInWorld", false)
     private val duplicateInTabValue = BoolValue("DuplicateInTab", false)
+    private val properties = BoolValue("Properties", false)
     private val duplicateCompareModeValue = ListValue("DuplicateCompareMode", arrayOf("OnTime", "WhenSpawn"), "OnTime") {
         duplicateInTabValue.get() || duplicateInWorldValue.get()
     }
@@ -63,6 +64,7 @@ object AntiBot : Module() {
     private val debugValue = BoolValue("Debug", false)
 
     private val ground = mutableListOf<Int>()
+    private val propertiesList = mutableListOf<Int>()
     private val air = mutableListOf<Int>()
     private val invalidGround = mutableMapOf<Int, Int>()
     private val swing = mutableListOf<Int>()
