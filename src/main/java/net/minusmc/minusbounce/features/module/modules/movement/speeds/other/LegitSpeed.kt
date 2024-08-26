@@ -10,7 +10,7 @@ import net.minusmc.minusbounce.features.module.modules.movement.speeds.SpeedType
 import net.minusmc.minusbounce.utils.player.MovementUtils.isMoving
 import net.minusmc.minusbounce.utils.extensions.tryJump
 
-class LegitSpeed: SpeedMode("Legit", SpeedType.OTHER) {
+class LegitSpeed: SpeedMode("LegitSpeed", SpeedType.OTHER) {
     override fun onUpdate() {
         val player = mc.thePlayer ?: return
 
