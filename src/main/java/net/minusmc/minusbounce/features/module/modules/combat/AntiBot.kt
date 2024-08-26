@@ -11,6 +11,7 @@ import net.minecraft.item.ItemArmor
 import net.minecraft.network.play.client.*
 import net.minecraft.network.play.server.*
 import net.minecraft.world.WorldSettings
+import net.minecraft.network.play.server.S20PacketEntityProperties
 import net.minusmc.minusbounce.MinusBounce
 import net.minusmc.minusbounce.event.*
 import net.minusmc.minusbounce.features.module.Module
@@ -168,6 +169,10 @@ object AntiBot : Module() {
         if (packet is S13PacketDestroyEntities) {
             hasRemovedEntities.addAll(packet.entityIDs.toTypedArray())
         }
+
+        if (packet is S20PacketEntityProperties) {
+            propertiesList += packet.entityId
+        }
     }
 
     @EventTarget
@@ -229,6 +234,9 @@ object AntiBot : Module() {
             return true
 
         if(wasInvisibleValue.get() && invisible.contains(entity.entityId))
+            return true
+
+        if (properties.get() && entity.entityId !in propertiesList)
             return true
 
         if(armorValue.get()) {
