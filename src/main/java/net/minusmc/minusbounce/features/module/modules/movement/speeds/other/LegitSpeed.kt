@@ -19,11 +19,5 @@ class LegitSpeed: SpeedMode("LegitSpeed", SpeedType.OTHER) {
         if (player.onGround && isMoving) {
             player.tryJump()
         }
-
-        if (player.motionY > 0.003) {
-            player.motionX *= 1.0015
-            player.motionZ *= 1.0015
-            mc.timer.timerSpeed = 1.06f
-        }
     }
 }
