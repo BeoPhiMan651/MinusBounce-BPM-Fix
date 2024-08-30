@@ -36,6 +36,7 @@ import net.minusmc.minusbounce.utils.misc.MathUtils
 import net.minusmc.minusbounce.utils.misc.RandomUtils
 import net.minusmc.minusbounce.utils.player.MovementCorrection
 import net.minusmc.minusbounce.utils.player.MovementUtils
+import net.minusmc.minusbounce.utils.player.MovementUtils.isMoving
 import net.minusmc.minusbounce.utils.player.RotationUtils
 import net.minusmc.minusbounce.value.BoolValue
 import net.minusmc.minusbounce.value.FloatValue
@@ -218,8 +219,8 @@ class Scaffold: Module() {
                 "simple" -> canSameY = true
                 "autojump" -> {
                     canSameY = true
-                    if (mc.thePlayer.onGround && MovementUtils.isMoving)
-                        mc.thePlayer.jump()
+                    if (mc.thePlayer.onGround && isMoving)
+                        mc.thePlayer.tryJump()
                 }
                 "motiony" -> {
                     canSameY = false
@@ -362,7 +363,7 @@ class Scaffold: Module() {
         }
 
         lockRotation?.let {
-            RotationUtils.setTargetRotation(it, keepLengthValue.get(), minTurnSpeed.get(), maxTurnSpeed.get(), 
+            RotationUtils.setTargetRotation(it, keepLengthValue.get(), minTurnSpeed.get(), maxTurnSpeed.get(),
                 if (movementCorrection.get()) MovementCorrection.Type.LIQUID_BOUNCE else MovementCorrection.Type.NONE)
         }
 
@@ -398,7 +399,7 @@ class Scaffold: Module() {
             towerMode.onPostMotion()
 
         lockRotation?.let {
-            RotationUtils.setTargetRotation(it, keepLengthValue.get(), minTurnSpeed.get(), maxTurnSpeed.get(), 
+            RotationUtils.setTargetRotation(it, keepLengthValue.get(), minTurnSpeed.get(), maxTurnSpeed.get(),
                 if (movementCorrection.get()) MovementCorrection.Type.LIQUID_BOUNCE else MovementCorrection.Type.NONE)
         }
 
@@ -454,7 +455,7 @@ class Scaffold: Module() {
             performBlockRaytrace(currentRotation, mc.playerController.blockReachDistance)?.let {
                 if (it.blockPos != targetPlace.blockPos || it.sideHit != targetPlace.enumFacing)
                     return
-            } 
+            }
         }
 
         var blockSlot = -1
@@ -731,7 +732,7 @@ class Scaffold: Module() {
                 }
             }
         }
-        
+
         placeRotation = considerablePlaceRotation ?: placeRotation
 
         placeRotation ?: return false
